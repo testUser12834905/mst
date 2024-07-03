@@ -1,52 +1,51 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { Textarea } from "@/components/ui/textarea";
-import SubmitAiChat, { data } from "@/utils/edenai/chat";
+import SubmitAiChat, { ChatResponse, data } from "@/utils/edenai/chat";
 import React from "react";
+import { redirect } from "next/navigation";
+import ChatButton from "../../../components/chat-button";
+import ChatForm from "@/components/chat-form";
 
 const Chat = async () => {
-  async function sendMessage(formDate: FormData) {
+  async function sendMessage(formData: FormData) {
     "use server";
-    const d = await SubmitAiChat(data);
-    console.log(d);
+    const chatMessage = formData.get("chat");
+
+    if (!chatMessage) return;
+
+    const provider = "openai/gpt-3.5-turbo";
+    const d = (await SubmitAiChat(
+      chatMessage as string,
+      undefined,
+      provider,
+    )) as {
+      [provider: string]: ChatResponse;
+    };
 
     const supabase = createClient();
     const res = await supabase
       .from("chats")
-      .upsert({ text: "sample text upsert" })
+      .upsert({ text: JSON.stringify(d[provider].message) })
       .select();
 
     console.log(res);
-    // SUBMIT MESSAGE
-    // GET RESPONSE
-    // SEND response to UI??
+    const id = res.data?.[0].id;
+    redirect(`chat/${id}`);
   }
 
-  const supabase = createClient();
-  const { data: chat } = await supabase.from("chats").select("*").eq("id", "1");
-
-  if (!chat) {
-    return <p>Error...</p>;
-  }
-
+  // const supabase = createClient();
+  // const { data: chat } = await supabase.from("chats").select("*").eq("id", "1");
+  //
+  // if (!chat) {
+  //   return <p>Error...</p>;
+  // }
+  //
   // console.log(chat);
   return (
-    <div className="w-full mt-6">
-      <h1 className="text-9xl font-extrabold">ChiiGPT</h1>
-
-      {chat[0]["text"]}
-      <form action={sendMessage} method="POST">
-        <Textarea
-          className="w-full"
-          disabled={false}
-          style={{ resize: "none" }}
-          placeholder="Type your message here."
-        />
-        <Button type="submit" className="mt-2">
-          Send message
-        </Button>
-      </form>
-    </div>
+    <>
+      <ChatForm sendMessage={sendMessage} />
+    </>
   );
 };
 
