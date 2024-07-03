@@ -21,8 +21,6 @@ const ChatId = async ({ params: { id } }: { params: { id: string } }) => {
     const history = messages;
     const chatMessage = formData.get("chat");
 
-    console.log("caht is: ", chat);
-
     if (!chatMessage) return;
 
     const provider = "openai/gpt-3.5-turbo";
@@ -34,27 +32,17 @@ const ChatId = async ({ params: { id } }: { params: { id: string } }) => {
       [provider: string]: ChatResponse;
     };
 
-    console.log(d[provider]);
-
     const supabase = createClient();
     const res = await supabase
       .from("chats")
       .update({ text: JSON.stringify([...messages, ...d[provider].message]) })
       .eq("id", id);
 
-    console.log(res);
-
     revalidatePath(`/chat/${id}`);
-    //
-    //
-    // SUBMIT MESSAGE
-    // GET RESPONSE
-    // SEND response to UI??
   }
 
   return (
     <>
-      {/* {chat[0]["text"]} */}
       {messages.map((message) => {
         return (
           <>

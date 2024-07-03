@@ -29,19 +29,10 @@ const Chat = async () => {
       .upsert({ text: JSON.stringify(d[provider].message) })
       .select();
 
-    console.log(res);
     const id = res.data?.[0].id;
     redirect(`chat/${id}`);
   }
 
-  // const supabase = createClient();
-  // const { data: chat } = await supabase.from("chats").select("*").eq("id", "1");
-  //
-  // if (!chat) {
-  //   return <p>Error...</p>;
-  // }
-  //
-  // console.log(chat);
   return (
     <>
       <ChatForm sendMessage={sendMessage} />
