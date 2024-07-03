@@ -1,10 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { Textarea } from "@/components/ui/textarea";
 import SubmitAiChat, { ChatResponse, data } from "@/utils/edenai/chat";
 import React from "react";
 import { redirect } from "next/navigation";
-import ChatButton from "../../../components/chat-button";
 import ChatForm from "@/components/chat-form";
 
 const Chat = async () => {
