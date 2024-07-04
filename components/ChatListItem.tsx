@@ -10,7 +10,12 @@ type Props = {
 const ChatListItem = ({ id, message }: Props) => {
   return (
     <li id={String(id)}>
-      <Link href={`/chat/${id}`}>{message}</Link>
+      <Link
+        className="flex items-center gap-4 rounded-md p-3 hover:bg-muted transition-colors border border-input"
+        href={`/chat/${id}`}
+      >
+        <div className="flex-1 truncate">{message}</div>
+      </Link>
     </li>
   );
 };

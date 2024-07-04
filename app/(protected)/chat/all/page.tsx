@@ -19,10 +19,17 @@ const AllChatsPage = async (props: Props) => {
         let messages: ChatMessage[] | undefined;
         try {
           messages = JSON.parse(chat["text"]);
-        } catch (error) {
-          messages = [{ role: "system", message: "Not valid chat" }];
-        }
-        return <ChatListItem id={chat["id"]} message={messages?.[0].message} />;
+        } catch (error) {}
+
+        return (
+          <>
+            {messages ? (
+              <ChatListItem id={chat["id"]} message={messages?.[0].message} />
+            ) : (
+              <></>
+            )}
+          </>
+        );
       })}
     </ul>
   );
